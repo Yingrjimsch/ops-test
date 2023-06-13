@@ -1,0 +1,13 @@
+- source:
+    fieldPath: data.APP_INSTANCE_DATABASE
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: Deployment
+      labelSelector: app.abraxas.ch/componet=service
+    fieldPaths:
+      - spec.template.spec.containers.*.env.*.valueFrom.secretKeyRef.name
+    options:
+      delimiter: '.'
+      index: 1

@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: APP_INSTANCE
+spec:
+  selector:
+    matchLabels:
+      app.abraxas.ch/instance: APP_INSTANCE
+      app.abraxas.ch/component: service
+  endpoints:
+    - port: http

@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: APP_INSTANCE-podmon-zalando
+spec:
+  selector:
+    matchLabels:
+      application: spilo
+      app.abraxas.ch/instance: APP_INSTANCE-database
+  podMetricsEndpoints:
+  - port: exporter

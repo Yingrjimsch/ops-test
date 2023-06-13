@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APP_INSTANCE-pgpool
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: pgpool
+        image: pgpool/pgpool:4.4.2
+        env:
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+              key: password
+        envFrom:
+        - configMapRef:
+            name: APP_INSTANCE-pgpool-configmap
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 50m
+            memory: 200Mi
+          requests:
+            cpu: 30m
+            memory: 150Mi
+      - name: pgpool-stats
+        image: pgpool/pgpool2_exporter:1.2.1
+        env:
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: POSTGRES_DATABASE
+          value: "postgres"
+        - name: PGPOOL_SERVICE
+          value: "localhost"
+        - name: PGPOOL_SERVICE_PORT
+          value: "9999"
+        - name: SSLMODE
+          value: "require"
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 30m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 50Mi

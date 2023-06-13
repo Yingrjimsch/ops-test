@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APP_INSTANCE
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    spec:
+      imagePullSecrets:
+        - name: dok-harbor-pull-secret
+      containers:
+        - name: APP_INSTANCE
+          image: APP_INSTANCE-image
+          env:
+            - name: DATABASE__USER
+              valueFrom:
+                secretKeyRef:
+                  name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DATABASE__PASS
+              valueFrom:
+                secretKeyRef:
+                  name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
+                  key: password
+          envFrom:
+            - configMapRef:
+                name: APP_INSTANCE
+            - secretRef:
+                name: APP_INSTANCE
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: grpc
+              containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
