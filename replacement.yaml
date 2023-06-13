@@ -1,0 +1,73 @@
+- source:
+    fieldPath: data.APP_INSTANCE_DATABASE
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: Deployment
+      labelSelector: app.abraxas.ch/componet=service
+    fieldPaths:
+      - spec.template.spec.containers.*.env.*.valueFrom.secretKeyRef.name
+    options:
+      delimiter: '.'
+      index: 1
+- source:
+    fieldPath: data.APP_INSTANCE
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: Deployment
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: postgresql
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ConfigMap
+      labelSelector: ops=replacement
+    reject:
+    - labelSelector: app.abraxas.ch/componet=service
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ConfigMap
+    reject:
+    - labelSelector: ops=replacement
+    - labelSelector: app.abraxas.ch/componet=service
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: Service
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ServiceMonitor
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: PodMonitor
+    fieldPaths:
+    - metadata.name
+    options:
+      delimiter: '-'
+      index: 0
