@@ -2,4 +2,4 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 resources:
-- git@github.com:Yingrjimsch/ops-test.git/pooler?ref=main
+- git@github.com:Yingrjimsch/ops-test.git/pgpool2?ref=main
