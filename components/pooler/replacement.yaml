@@ -5,9 +5,9 @@
   targets:
   - select:
       kind: Deployment
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
     fieldPaths:
-      - spec.template.spec.containers.*.env.*.valueFrom.secretKeyRef.name
+    - spec.template.spec.containers.*.env.*.valueFrom.secretKeyRef.name
     options:
       delimiter: '.'
       index: 1
@@ -18,33 +18,33 @@
   targets:
   - select:
       kind: Deployment
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
     fieldPaths:
 #    - metadata.name
     - metadata.labels.[app.abraxas.ch/instance]
-    - spec.template.spec.containers.*.name
-    - spec.template.spec.containers.*.envFrom.*.secretRef.name
     - spec.template.spec.containers.*.envFrom.*.configMapRef.name
-#    - spec.template.spec.containers.*.image
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ConfigMap
+      labelSelector: app.abraxas.ch/component=pooler
+    reject:
+      - labelSelector: ops=replacement
+    fieldPaths:
+#    - metadata.name
+    - metadata.labels.[app.abraxas.ch/instance]
+    - data.PGPOOL_PARAMS_BACKEND_HOSTNAME0
+    - data.PGPOOL_PARAMS_BACKEND_HOSTNAME1
     options:
       delimiter: '-'
       index: 0
   - select:
       kind: Service
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
     fieldPaths:
 #    - metadata.name
     - metadata.labels.[app.abraxas.ch/instance]
-    options:
-      delimiter: '-'
-      index: 0
-  - select:
-      kind: ServiceMonitor
-      labelSelector: app.abraxas.ch/componet=service
-    fieldPaths:
-#    - metadata.name
-    - metadata.labels.[app.abraxas.ch/instance]
-    - spec.selector.matchLabels.[app.abraxas.ch/instance]
     options:
       delimiter: '-'
       index: 0
@@ -55,7 +55,17 @@
   targets:
   - select:
       kind: Deployment
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/name]
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ConfigMap
+      labelSelector: app.abraxas.ch/component=pooler
+    reject:
+    - labelSelector: ops=replacement
     fieldPaths:
     - metadata.labels.[app.abraxas.ch/name]
     options:
@@ -63,15 +73,7 @@
       index: 0
   - select:
       kind: Service
-      labelSelector: app.abraxas.ch/componet=service
-    fieldPaths:
-    - metadata.labels.[app.abraxas.ch/name]
-    options:
-      delimiter: '-'
-      index: 0
-  - select:
-      kind: ServiceMonitor
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
     fieldPaths:
     - metadata.labels.[app.abraxas.ch/name]
     options:
@@ -84,7 +86,17 @@
   targets:
   - select:
       kind: Deployment
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/part-of]
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: ConfigMap
+      labelSelector: app.abraxas.ch/component=pooler
+    reject:
+    - labelSelector: ops=replacement
     fieldPaths:
     - metadata.labels.[app.abraxas.ch/part-of]
     options:
@@ -92,15 +104,7 @@
       index: 0
   - select:
       kind: Service
-      labelSelector: app.abraxas.ch/componet=service
-    fieldPaths:
-    - metadata.labels.[app.abraxas.ch/part-of]
-    options:
-      delimiter: '-'
-      index: 0
-  - select:
-      kind: ServiceMonitor
-      labelSelector: app.abraxas.ch/componet=service
+      labelSelector: app.abraxas.ch/component=pooler
     fieldPaths:
     - metadata.labels.[app.abraxas.ch/part-of]
     options:

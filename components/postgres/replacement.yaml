@@ -1,0 +1,79 @@
+- source:
+    fieldPath: data.APP_INSTANCE_DATABASE
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: postgresql
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+      - spec.sidecars.*.env.*.valueFrom.secretKeyRef.name
+    options:
+      delimiter: '.'
+      index: 1
+- source:
+    fieldPath: data.APP_INSTANCE
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: postgresql
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+#    - metadata.name
+    - metadata.labels.[app.abraxas.ch/instance]
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: PodMonitor
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+#    - metadata.name
+    - metadata.labels.[app.abraxas.ch/instance]
+    - spec.selector.matchLabels.[app.abraxas.ch/instance]
+    options:
+      delimiter: '-'
+      index: 0
+- source:
+    fieldPath: data.APP_NAME
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: postgresql
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/name]
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: PodMonitor
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/name]
+    options:
+      delimiter: '-'
+      index: 0
+- source:
+    fieldPath: data.APP_PART_OF
+    kind: ConfigMap
+    name: ops-envconfig-overlay
+  targets:
+  - select:
+      kind: postgresql
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/part-of]
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: PodMonitor
+      labelSelector: app.abraxas.ch/componet=database
+    fieldPaths:
+    - metadata.labels.[app.abraxas.ch/part-of]
+    options:
+      delimiter: '-'
+      index: 0
