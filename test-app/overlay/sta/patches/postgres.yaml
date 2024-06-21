@@ -1,0 +1,15 @@
+- op: replace
+  path: /spec/resources
+  value:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+- op: replace
+  path: /spec/postgresql/parameters/max_connections
+  value: "300"
+- op: replace
+  path: /spec/postgresql/parameters/shared_buffers
+  value: "128MB"

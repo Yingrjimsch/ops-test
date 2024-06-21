@@ -1,0 +1,46 @@
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServerRoute
+metadata:
+  name:  APP_INSTANCE-vsr
+spec:
+  host: sta.test.application-apis.ch
+  upstreams:
+  - name: APP_INSTANCE-vsr
+    service: APP_INSTANCE
+    port: 8080
+  subroutes:
+    - path: /webhook/
+      location-snippets: |-
+        if ($http_origin !~* '^(http://localhost:4200|https://sta.test.application-apps.ch)$') {
+          set $http_origin null;
+        }
+        if ($request_method = 'OPTIONS') {
+          add_header 'Access-Control-Allow-Origin' $http_origin always;
+          add_header 'Access-Control-Allow-Credentials' 'true';
+          add_header 'Access-Control-Expose-Headers' '*';
+          add_header 'Access-Control-Allow-Headers' '*';
+          add_header 'Access-Control-Max-Age' '86400';
+          add_header 'Access-Control-Allow-Methods' 'POST, GET, PUT, OPTIONS, PATCH, DELETE' always;
+          return 204;
+        }
+        if ($request_method ~* '(GET|POST|PUT|DELETE|HEAD)') {
+          add_header 'Access-Control-Allow-Origin' $http_origin always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+        }
+      action:
+        proxy:
+          upstream: APP_INSTANCE-vsr
+---
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServerRoute
+metadata:
+  name:  test-service-service-vsr-test
+spec:
+  host: sta.test.application-apis.ch
+  subroutes:
+    - path: /webhook-test/
+      action:
+        return:
+          code: 200
+          type: text/plain
+          body: "Best regards axgno01\n"

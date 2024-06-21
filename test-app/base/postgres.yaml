@@ -1,0 +1,44 @@
+apiVersion: kubedb.com/v1alpha2
+kind: Postgres
+metadata:
+  name: dok-webhook-database
+spec:
+  authSecret:
+    name: dok-webhook-database-auth
+  configSecret:
+    name: webhook-custom-config
+  coordinator:
+    resources:
+      limits:
+        cpu: 25m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+  monitor:
+    agent: prometheus.io/operator
+    prometheus:
+      serviceMonitor:
+        interval: 10s
+        labels:
+  podTemplate:
+    spec:
+      resources:
+        limits:
+          cpu: 70m
+          memory: 200Mi
+        requests:
+          cpu: 50m
+          memory: 150Mi
+  replicas: 1
+  standbyMode: Warm
+  storage:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 500Mi
+    storageClassName: data-hot
+  storageType: Durable
+  terminationPolicy: Halt
+  version: "11.11"

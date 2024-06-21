@@ -1,0 +1,6 @@
+- op: add
+  path: /metadata/labels/monitoring~1app
+  value: sta-test-app
+- op: add
+  path: /spec/selector/matchLabels/env
+  value: sta

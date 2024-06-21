@@ -1,0 +1,12 @@
+- op: add
+  path: /data/PGPOOL_PARAMS_NUM_INIT_CHILDREN
+  value: "148"
+- op: add
+  path: /data/PGPOOL_PARAMS_MAX_POOL
+  value: "1"
+- op: replace
+  path: /data/PGPOOL_PARAMS_BACKEND_HOSTNAME0
+  value: APP_INSTANCE_DATABASE..svc.cluster.local.
+- op: replace
+  path: /data/PGPOOL_PARAMS_BACKEND_HOSTNAME1
+  value: APP_INSTANCE_DATABASE-repl..svc.cluster.local.

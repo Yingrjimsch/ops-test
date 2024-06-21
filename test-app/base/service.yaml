@@ -1,12 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: APP_INSTANCE
+  name: dok-webhook
 spec:
   ports:
     - port: 8080
       targetPort: http
       name: http
-    - port: 5000
-      targetPort: grpc
-      name: grpc

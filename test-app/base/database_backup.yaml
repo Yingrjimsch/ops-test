@@ -1,0 +1,25 @@
+apiVersion: stash.appscode.com/v1beta1
+kind: BackupConfiguration
+metadata:
+  name: dok-webhook-database-backup
+spec:
+  schedule: "15 2 * * *"
+  paused: false
+  task:
+    # task name depending on used database version
+    # to get all supported tasks: kubectl get tasks.stash.appscode.com
+    name: postgres-backup-11.9
+  repository:
+    name: dok-webhook-database-backup-repository
+  target:
+    ref:
+      apiVersion: appcatalog.appscode.com/v1alpha1
+      kind: AppBinding
+      name: dok-webhook-database
+  retentionPolicy:
+    name: 'abx-default'
+    keepDaily: 6
+    keepWeekly: 3
+    keepMonthly: 11
+    keepYearly: 1
+    prune: true

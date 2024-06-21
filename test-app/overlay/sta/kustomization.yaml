@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: test-app-ns
+
+labels:
+- includeSelectors: true
+  pairs:
+    env: sta
+
+resources:
+- ../../base
+- config.yaml
+- vsr.yaml
+
+components:
+- ssh://git@github.com:Yingrjimsch/ops-components.git/components/postgres_pooler_ha_wal?ref=master
+- ssh://git@github.com:Yingrjimsch/ops-components.git/components/postgres_ds_grafana?ref=master
+- ssh://git@github.com:Yingrjimsch/ops-components.git/components/service_db?ref=master
+- ssh://git@github.com:Yingrjimsch/ops-components.git/components/wal_clone?ref=master
+
+patches:
+- path: patches/deployment.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: APP_INSTANCE
+    version: v1
+- path: patches/postgres.yaml
+  target:
+    group: acid.zalan.do
+    kind: postgresql
+    name: APP_INSTANCE_DATABASE
+    version: v1
+- path: patches/pgpool.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: APP_INSTANCE-pgpool
+    version: v1
+- path: patches/configmap-pgpool.yaml
+  target:
+    kind: ConfigMap
+    name: APP_INSTANCE-pgpool-configmap
+- path: patches/postgres-zalando-backup.yaml
+  target:
+    group: acid.zalan.do
+    kind: postgresql
+    name: APP_INSTANCE_DATABASE
+    version: v1
+- path: patches/service-monitor.yaml
+  target:
+    group: monitoring.coreos.com
+    name: APP_INSTANCE|APP_INSTANCE-podmon-zalando
+    version: v1
+- path: imageversion.yaml
+
+replacements:
+  - path: replacement-overlay.yaml
+
+images:
+- digest: sha256:e5f16b65c4804efbbf74914f697d6ab9a2a6b0fa9addf4eb662844627c48a471
+  name: APP_INSTANCE-image
+  newName: test-app

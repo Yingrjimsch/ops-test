@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: APP_INSTANCE
+  name: dok-webhook
 spec:
   replicas: 1
   revisionHistoryLimit: 0
@@ -15,45 +15,46 @@ spec:
       imagePullSecrets:
         - name: dok-harbor-pull-secret
       containers:
-        - name: APP_INSTANCE
-          image: APP_INSTANCE-image
+        - name: dok-webhook
+          image: dok-webhook-service-image
           env:
             - name: DATABASE__USER
               valueFrom:
                 secretKeyRef:
-                  name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
-                  key: username
+                  name: dok-webhook-database-auth
+                  key: POSTGRES_USER
             - name: DATABASE__PASS
               valueFrom:
                 secretKeyRef:
-                  name: dbadmin.APP_INSTANCE-database.credentials.postgresql.acid.zalan.do
-                  key: password
+                  name: dok-webhook-database-auth
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE__HOST
+              value: dok-webhook-database
           envFrom:
             - configMapRef:
-                name: APP_INSTANCE
+                name: dok-webhook
             - secretRef:
-                name: APP_INSTANCE
+                name: dok-webhook
           ports:
             - name: http
               containerPort: 8080
-            - name: grpc
-              containerPort: 5000
           livenessProbe:
             httpGet:
               path: /health
               port: http
-            initialDelaySeconds: 5
+            initialDelaySeconds: 20
             timeoutSeconds: 2
           readinessProbe:
             httpGet:
               path: /health
               port: http
-            initialDelaySeconds: 5
+            initialDelaySeconds: 20
             timeoutSeconds: 2
           resources:
             limits:
-              cpu: 200m
-              memory: 200Mi
+              cpu: 250m
+              memory: 1200Mi
             requests:
-              cpu: 100m
-              memory: 100Mi
+              cpu: 200m
+              memory: 600Mi
+

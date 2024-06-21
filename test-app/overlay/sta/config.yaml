@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: APP_INSTANCE
+    app.kubernetes.io/component: service
+  name: APP_INSTANCE
+data:
+  RABBIT__CONNECTION__HOSTNAMES__0: 'rabbitmq..svc.cluster.local.'
+  SECURECONNECT__AUTHORITY: 'https://sta.accounts.kubernetes.io/'
+  DATABASE__NAME: 'postgres'
+  DATABASE__HOST: 'APP_INSTANCE-pgpool..svc.cluster.local.'
+  DATABASE__PORT: '9999'

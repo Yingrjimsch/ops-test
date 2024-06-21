@@ -1,0 +1,11 @@
+apiVersion: stash.appscode.com/v1alpha1
+kind: Repository
+metadata:
+  name: dok-webhook-database-backup-repository
+spec:
+  backend:
+    s3:
+      endpoint: 'https://backup.abraxas-tools.ch'
+      bucket: dok
+      prefix: webhook/db/postgres/env
+    storageSecretName: dokumente-webhook-database-backup

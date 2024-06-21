@@ -1,11 +1,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: APP_INSTANCE
+  name: dok-webhook
 spec:
   selector:
     matchLabels:
-      app.abraxas.ch/instance: APP_INSTANCE
-      app.abraxas.ch/component: service
+      app: dok-webhook
+      app/component: webhook
   endpoints:
     - port: http

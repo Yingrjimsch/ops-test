@@ -1,0 +1,10 @@
+- op: replace
+  path: /spec/env/1
+  value:
+    name: BACKUP_SCHEDULE
+    value: '00 03 * * *'  #The schedule in cron format when a basebackup should be made. Time of Spilo Image (UTC)
+- op: replace
+  path: /spec/env/2
+  value:
+    name: BACKUP_NUM_TO_RETAIN
+    value:  "40"  #Controls the number of WAL-G backups which should reside on your S3 storage
